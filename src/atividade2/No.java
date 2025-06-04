@@ -1,34 +1,19 @@
 package atividade2;
+
 public class No {
     int valor;
-    No esquerda, direita;
+    int altura;
+    No esquerdo, direito;
 
     public No(int valor) {
         this.valor = valor;
-        esquerda = direita = null;
+        this.altura = 1;
+        this.esquerdo = null;
+        this.direito = null;
     }
 
-    public int getValor() {
-        return valor;
-    }
-
-    public void setValor(int valor) {
-        this.valor = valor;
-    }
-
-    public No getEsquerda() {
-        return esquerda;
-    }
-
-    public void setEsquerda(No esquerda) {
-        this.esquerda = esquerda;
-    }
-
-    public No getDireita() {
-        return direita;
-    }
-
-    public void setDireita(No direita) {
-        this.direita = direita;
+    @Override
+    public String toString() {
+        return String.valueOf(valor);
     }
 }
