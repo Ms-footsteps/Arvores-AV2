@@ -1,123 +1,126 @@
 package atividade2;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ArvoreGUI extends JFrame {
-
-    private ArvoreBinaria binaria = new ArvoreBinaria();
-    private ArvoreAVL avl = new ArvoreAVL();
-    private ArvoreRubroNegra rubroNegra = new ArvoreRubroNegra();
-
-    private JTextField inputValor = new JTextField(10);
-    private JTextArea outputArea = new JTextArea(15, 50);
-    private JLabel statusLabel = new JLabel(" ");
+    private final ArvoreAVL arvore = new ArvoreAVL();
+    private final JTextField input = new JTextField(10);
+    private final JTextArea output = new JTextArea(25, 70);
 
     public ArvoreGUI() {
-        super("Visualizador de Árvores - Binária, AVL e Rubro-Negra");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        super("Árvore AVL - Inserção, Remoção e Impressão");
 
-        // Painel de controle
-        JPanel painelControles = new JPanel();
-        painelControles.add(new JLabel("Valor:"));
-        painelControles.add(inputValor);
+        // Botão Inserir
+        JButton btnInserir = new JButton("Inserir");
+        btnInserir.addActionListener(e -> {
+            try {
+                int val = Integer.parseInt(input.getText());
+                if (arvore.contem(val)) {
+                    output.setText("Valor " + val + " já existe na árvore.");
+                } else {
+                    arvore.inserir(val);
+                    // Mostra no JTextArea a árvore vertical com arestas
+                    String desenho = arvore.imprimirVerticalComArestasEmString();
+                    output.setText("Inserido: " + val + "\n\n" + desenho);
 
-        // Botões para inserir
-        painelControles.add(botao("Inserir Binária", e -> {
-            int val = getInput();
-            binaria.inserir(val);
-            setStatus("Inserido em Binária.");
-        }));
+                    // Também imprime no console
+                    System.out.println("\n--- Árvore no terminal após inserir " + val + " ---");
+                    System.out.println(desenho);
+                }
+            } catch (NumberFormatException ex) {
+                output.setText("Erro: insira um número válido.");
+            }
+        });
 
-        painelControles.add(botao("Inserir AVL", e -> {
-            int val = getInput();
-            avl.inserir(val);
-            setStatus("Inserido em AVL.");
-        }));
+        // Botão Remover
+        JButton btnRemover = new JButton("Remover");
+        btnRemover.addActionListener(e -> {
+            try {
+                int val = Integer.parseInt(input.getText());
+                boolean removido = arvore.remover(val);
+                if (!removido) {
+                    output.setText("Valor " + val + " não encontrado.");
+                } else {
+                    // Depois de remover, exibe no JTextArea a árvore atualizada
+                    String desenho = arvore.imprimirVerticalComArestasEmString();
+                    output.setText("Removido: " + val + "\n\n" + desenho);
 
-        painelControles.add(botao("Inserir Rubro-Negra", e -> {
-            int val = getInput();
-            rubroNegra.inserir(val);
-            setStatus("Inserido em Rubro-Negra.");
-        }));
+                    // Também imprime no console
+                    System.out.println("\n--- Árvore no terminal após remover " + val + " ---");
+                    System.out.println(desenho);
+                }
+            } catch (NumberFormatException ex) {
+                output.setText("Erro: insira um número válido.");
+            }
+        });
 
-        // Botões para remover
-        painelControles.add(botao("Remover Binária", e -> {
-            int val = getInput();
-            binaria.remover(val);
-            setStatus("Removido da Binária.");
-        }));
+        // Percursos tradicionais
+        JButton btnEmOrdem = new JButton("Em Ordem");
+        btnEmOrdem.addActionListener(e ->
+            output.setText("Em Ordem:\n" + arvore.imprimirEmOrdem())
+        );
 
-        painelControles.add(botao("Remover AVL", e -> {
-            int val = getInput();
-            avl.remover(val);
-            setStatus("Removido da AVL.");
-        }));
+        JButton btnPreOrdem = new JButton("Pré Ordem");
+        btnPreOrdem.addActionListener(e ->
+            output.setText("Pré Ordem:\n" + arvore.imprimirPreOrdem())
+        );
 
-        painelControles.add(botao("Remover Rubro-Negra", e -> {
-            int val = getInput();
-            rubroNegra.remover(val);
-            setStatus("Removido da Rubro-Negra.");
-        }));
+        JButton btnPosOrdem = new JButton("Pós Ordem");
+        btnPosOrdem.addActionListener(e ->
+            output.setText("Pós Ordem:\n" + arvore.imprimirPosOrdem())
+        );
 
-        // Botões para busca
-        painelControles.add(botao("Buscar em Binária", e -> {
-            int val = getInput();
-            setStatus(binaria.buscar(val) == true ? "Encontrado na Binária." : "Não encontrado.");
-        }));
+        // Impressão sideways (filho direito cima e filho esquerdo embaixo)
+        JButton btnImprimirHierarquia = new JButton("Imprimir Hierarquia");
+        btnImprimirHierarquia.addActionListener(e -> {
+            String s = arvore.imprimirHierarquicoEmString();
+            if (s.trim().isEmpty()) {
+                output.setText("Árvore vazia.");
+            } else {
+                output.setText("Hierarquia (sideways):\n\n" + s);
+            }
+            System.out.println("\n--- Impressão hierárquica (sideways) solicitada ---");
+            arvore.imprimirHierarquicoNoConsole();
+        });
 
-        painelControles.add(botao("Buscar em AVL", e -> {
-            int val = getInput();
-            setStatus(avl.buscar(val) == true ? "Encontrado na AVL." : "Não encontrado.");
-        }));
+        // Impressão vertical com arestas (usando o novo método)
+        JButton btnImprimirVerticalArestas = new JButton("Imprimir Vertical c/ Arestas");
+        btnImprimirVerticalArestas.addActionListener(e -> {
+            String s = arvore.imprimirVerticalComArestasEmString();
+            if (s.trim().isEmpty()) {
+                output.setText("Árvore vazia.");
+            } else {
+                output.setText("Árvore (vertical com arestas):\n\n" + s);
+            }
+            System.out.println("\n--- Impressão vertical com arestas solicitada ---");
+            System.out.println(s);
+        });
 
-        painelControles.add(botao("Buscar em Rubro-Negra", e -> {
-            int val = getInput();
-            setStatus(rubroNegra.buscar(val) == true ? "Encontrado na Rubro-Negra." : "Não encontrado.");
-        }));
+        // Montagem do painel de botões + campo de entrada
+        JPanel painelTopo = new JPanel();
+        painelTopo.add(new JLabel("Valor:"));
+        painelTopo.add(input);
+        painelTopo.add(btnInserir);
+        painelTopo.add(btnRemover);
+        painelTopo.add(btnEmOrdem);
+        painelTopo.add(btnPreOrdem);
+        painelTopo.add(btnPosOrdem);
+        painelTopo.add(btnImprimirHierarquia);
+        painelTopo.add(btnImprimirVerticalArestas);
 
-        // Botões para imprimir
-        painelControles.add(botao("Imprimir Todas", e -> {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Binária: ").append(binaria.imprimir()).append("\n");
-            sb.append("AVL: ").append(avl.imprimir()).append("\n");
-            sb.append("Rubro-Negra: ").append(rubroNegra.imprimir()).append("\n");
-            outputArea.setText(sb.toString());
-        }));
+        // Usa fonte monoespaçada para alinhar precisamente
+        output.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        output.setEditable(false);
+        JScrollPane scroll = new JScrollPane(output);
 
-        // Área de resultado
-        JPanel painelSaida = new JPanel(new BorderLayout());
-        painelSaida.add(new JScrollPane(outputArea), BorderLayout.CENTER);
-        painelSaida.add(statusLabel, BorderLayout.SOUTH);
-        outputArea.setEditable(false);
+        add(painelTopo, BorderLayout.NORTH);
+        add(scroll, BorderLayout.CENTER);
 
-        add(painelControles, BorderLayout.NORTH);
-        add(painelSaida, BorderLayout.CENTER);
-
-        pack();
+        setSize(900, 650);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
-    }
-
-    private JButton botao(String texto, ActionListener action) {
-        JButton btn = new JButton(texto);
-        btn.addActionListener(action);
-        return btn;
-    }
-
-    private int getInput() {
-        try {
-            return Integer.parseInt(inputValor.getText().trim());
-        } catch (NumberFormatException e) {
-            setStatus("Insira um número válido.");
-            throw e;
-        }
-    }
-
-    private void setStatus(String msg) {
-        statusLabel.setText(msg);
     }
 
     public static void main(String[] args) {
