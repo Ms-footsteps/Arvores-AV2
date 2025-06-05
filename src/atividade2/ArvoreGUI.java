@@ -5,8 +5,8 @@ import java.awt.*;
 
 public class ArvoreGUI extends JFrame {
     private final ArvoreAVL arvore = new ArvoreAVL();
-    private final JTextField input = new JTextField(10);
-    private final JTextArea output = new JTextArea(25, 70);
+    private final JTextField input = new JTextField(20);
+    private final JTextArea output = new JTextArea(35, 100);
 
     public ArvoreGUI() {
         super("Árvore AVL - Inserção, Remoção e Impressão");
@@ -25,7 +25,7 @@ public class ArvoreGUI extends JFrame {
                     output.setText("Inserido: " + val + "\n\n" + desenho);
 
                     // Também imprime no console
-                    System.out.println("\n--- Árvore no terminal após inserir " + val + " ---");
+                    System.out.println("\n--- Árvore após inserir " + val + " ---");
                     System.out.println(desenho);
                 }
             } catch (NumberFormatException ex) {
@@ -72,7 +72,7 @@ public class ArvoreGUI extends JFrame {
         );
 
         // Impressão sideways (filho direito cima e filho esquerdo embaixo)
-        JButton btnImprimirHierarquia = new JButton("Imprimir Hierarquia");
+        JButton btnImprimirHierarquia = new JButton("Imprimir Sem Arestas");
         btnImprimirHierarquia.addActionListener(e -> {
             String s = arvore.imprimirHierarquicoEmString();
             if (s.trim().isEmpty()) {
@@ -85,7 +85,7 @@ public class ArvoreGUI extends JFrame {
         });
 
         // Impressão vertical com arestas (usando o novo método)
-        JButton btnImprimirVerticalArestas = new JButton("Imprimir Vertical c/ Arestas");
+        JButton btnImprimirVerticalArestas = new JButton("Imprimir Hierarquicamente");
         btnImprimirVerticalArestas.addActionListener(e -> {
             String s = arvore.imprimirVerticalComArestasEmString();
             if (s.trim().isEmpty()) {
@@ -110,14 +110,14 @@ public class ArvoreGUI extends JFrame {
         painelTopo.add(btnImprimirVerticalArestas);
 
         // Usa fonte monoespaçada para alinhar precisamente
-        output.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        output.setFont(new Font("Monospaced", Font.PLAIN, 14));
         output.setEditable(false);
         JScrollPane scroll = new JScrollPane(output);
 
         add(painelTopo, BorderLayout.NORTH);
         add(scroll, BorderLayout.CENTER);
 
-        setSize(900, 650);
+        setSize(1200, 800);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
